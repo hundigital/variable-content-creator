@@ -1,0 +1,173 @@
+/* Variable Content Creator — Admin stilleri */
+
+.vcc-admin {
+    max-width: 900px;
+    margin-top: 1em;
+}
+
+.vcc-info-box {
+    background: #f0f6fc;
+    border-left: 4px solid #2271b1;
+    padding: 1em 1.25em;
+    margin: 1em 0;
+}
+
+.vcc-notice {
+    padding: 0.75em 1em;
+    margin: 1em 0;
+    border-left-width: 4px;
+    border-left-style: solid;
+}
+
+.vcc-notice-error {
+    background: #fcf0f1;
+    border-left-color: #d63638;
+}
+
+.vcc-php-limits {
+    background: #f6f7f7;
+    padding: 1em;
+    margin: 1em 0;
+    border: 1px solid #c3c4c7;
+}
+
+.vcc-php-limits ul {
+    margin: 0.5em 0;
+    list-style: none;
+}
+
+.vcc-php-limits li {
+    margin: 0.25em 0;
+}
+
+.vcc-section-title {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    font-size: 1.1em;
+}
+
+.vcc-form .vcc-row {
+    margin: 1em 0;
+}
+
+.vcc-selects {
+    display: flex;
+    gap: 1em;
+    flex-wrap: wrap;
+}
+
+.vcc-field {
+    margin-bottom: 1em;
+}
+
+.vcc-field label {
+    display: block;
+    margin-bottom: 0.25em;
+    font-weight: 600;
+}
+
+.vcc-field select {
+    min-width: 180px;
+}
+
+.vcc-field .description {
+    margin-top: 0.25em;
+    color: #646970;
+    font-size: 0.95em;
+}
+
+.vcc-extra-options {
+    margin: 1em 0;
+    padding: 0.75em 1em;
+    background: #f6f7f7;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+}
+
+.vcc-extra-options .vcc-option-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+}
+
+.vcc-checkbox-label {
+    display: block;
+    margin: 0.35em 0;
+    font-weight: normal;
+}
+
+.vcc-checkbox-label input {
+    margin-right: 6px;
+}
+
+.vcc-estimate {
+    margin: 0.75em 0;
+    padding: 0.5em 1em;
+    background: #f0f6fc;
+    border-radius: 4px;
+}
+
+.vcc-field-editor {
+    margin-top: 1.5em;
+}
+
+.vcc-seo-templates .vcc-field {
+    max-width: 100%;
+}
+
+.vcc-seo-templates input.large-text,
+.vcc-seo-templates textarea.large-text {
+    width: 100%;
+    max-width: 600px;
+}
+
+.vcc-actions {
+    margin-top: 1.5em;
+}
+
+.vcc-actions .button + .button {
+    margin-left: 0.5em;
+}
+
+/* Progress */
+.vcc-progress-area {
+    margin-top: 1.5em;
+    padding: 1em;
+    background: #f6f7f7;
+    border: 1px solid #c3c4c7;
+}
+
+.vcc-progress-bar-wrap {
+    height: 24px;
+    background: #dcdcde;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5em;
+}
+
+.vcc-progress-bar {
+    height: 100%;
+    background: #2271b1;
+    transition: width 0.2s ease;
+}
+
+.vcc-progress-text {
+    margin: 0;
+    font-size: 0.95em;
+}
+
+.vcc-errors {
+    margin-top: 1em;
+    padding: 0.75em;
+    background: #fcf0f1;
+    border: 1px solid #d63638;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 0.9em;
+}
+
+.vcc-errors ul {
+    margin: 0;
+    padding-left: 1.5em;
+}

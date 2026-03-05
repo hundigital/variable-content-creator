@@ -1,0 +1,34 @@
+---
+description: Variable Content Creator eklentisi için PHP, JS ve WordPress kod standartları
+globs: **/*.php, **/*.js, **/templates/**/*
+alwaysApply: true
+---
+
+# Variable Content Creator — Proje Kuralları
+
+Bu proje bir WordPress eklentisidir. Detaylı iş akışı `workflow.md`, tam kod kuralları `RULE.md` dosyasında tanımlıdır.
+
+## Uygulanacak Standartlar
+
+1. **PHP**
+   - PHP 7.4+, kısa array `[]`, dosya sonunda newline, kapanış `?>` yok.
+   - Sınıflar PascalCase, metotlar/fonksiyonlar camelCase. Tüm public API ve option/hook isimleri `vcc_` veya `VCC_` önekli.
+   - Güvenlik: nonce (`vcc_nonce`), capability (`manage_options` / `publish_posts`), sanitize/escape (sanitize_text_field, esc_html, esc_attr, wp_kses_post).
+   - Post: `wp_insert_post`, meta: `_vcc_*`, option: `vcc_*`.
+
+2. **JavaScript**
+   - Admin AJAX action’ları: `vcc_get_towns`, `vcc_get_districts`, `vcc_generate_batch`. Her istekte nonce gönderilir.
+   - camelCase; global kirliliği önlemek için IIFE veya namespace.
+
+3. **Veri ve çıktı**
+   - Lokasyon verisi `data/il-ilce-semtler.json`; yapı workflow.md §1 ile uyumlu.
+   - Placeholder’lar: `%IL%`, `%ILCE%`, `%SEMT%`. Üretilen içerik Gutenberg için `<!-- wp:html --> ... <!-- /wp:html -->` ile sarılır.
+   - Rank Math meta: `rank_math_title`, `rank_math_description`, `rank_math_focus_keyword` post meta’ya yazılır.
+
+4. **Queue/Batch**
+   - Kuyruk: `vcc_queue`, `vcc_queue_cursor`. Batch endpoint cursor’ı ilerletir; hata ve created/remaining döner.
+
+5. **Dosya yapısı**
+   - Ana dosya: `variable-content-creator.php`. Sınıflar `includes/*.php`, şablon `templates/admin-page.php`, asset’ler `assets/admin.js`, `assets/admin.css`.
+
+Yeni özellik veya düzeltme yaparken `workflow.md` ve `RULE.md` ile çelişmeyin; test senaryolarını (workflow §13) göz önünde tutun.
