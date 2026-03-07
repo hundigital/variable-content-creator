@@ -73,6 +73,7 @@ function vcc_ajax_start_queue() {
         $seo_title_tpl = isset($_POST['seo_title_tpl']) ? sanitize_text_field(wp_unslash($_POST['seo_title_tpl'])) : '';
         $seo_desc_tpl = isset($_POST['seo_desc_tpl']) ? sanitize_textarea_field(wp_unslash($_POST['seo_desc_tpl'])) : '';
         $focus_keyword_tpl = isset($_POST['focus_keyword_tpl']) ? sanitize_text_field(wp_unslash($_POST['focus_keyword_tpl'])) : '';
+        $default_thumbnail_id = isset($_POST['default_thumbnail_id']) ? absint($_POST['default_thumbnail_id']) : 0;
         if ($il === '') {
             wp_send_json(['success' => false, 'message' => __('İl seçin.', 'variable-content-creator')]);
         }
@@ -86,6 +87,7 @@ function vcc_ajax_start_queue() {
         update_option('vcc_seo_title_tpl', $seo_title_tpl, false);
         update_option('vcc_seo_desc_tpl', $seo_desc_tpl, false);
         update_option('vcc_focus_keyword_tpl', $focus_keyword_tpl, false);
+        update_option('vcc_default_thumbnail_id', $default_thumbnail_id, false);
         Queue::setQueue($targets);
         wp_send_json(['success' => true, 'total' => count($targets)]);
     } catch (Throwable $e) {

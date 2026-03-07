@@ -9,6 +9,7 @@
  * @var string $seo_title_tpl
  * @var string $seo_desc_tpl
  * @var string $focus_keyword_tpl
+ * @var int    $default_thumbnail_id
  */
 if (!defined('ABSPATH')) {
     exit;
@@ -91,10 +92,10 @@ if (!defined('ABSPATH')) {
             wp_editor($content_template, 'vcc_content_template', [
                 'textarea_name' => 'vcc_content_template',
                 'textarea_rows' => 20,
-                'media_buttons' => false,
+                'media_buttons' => true,
                 'teeny'         => false,
                 'quicktags'     => true,
-                'tinymce'       => ['toolbar1' => 'formatselect,bold,italic,link,unlink,blockquote,code'],
+                'tinymce'       => ['toolbar1' => 'formatselect,bold,italic,link,unlink,blockquote,code,image'],
                 'editor_class'  => 'vcc-editor',
             ]);
             ?>
@@ -114,6 +115,21 @@ if (!defined('ABSPATH')) {
                 <label for="vcc_focus_keyword_tpl"><?php esc_html_e('Focus Keyword (Rank Math)', 'variable-content-creator'); ?></label>
                 <p class="description"><?php esc_html_e('Virgülle ayırarak 5 anahtar kelime girebilirsiniz. Her biri %IL%, %ILCE%, %SEMT% içerebilir.', 'variable-content-creator'); ?></p>
                 <input type="text" id="vcc_focus_keyword_tpl" name="vcc_focus_keyword_tpl" value="<?php echo esc_attr($focus_keyword_tpl); ?>" class="large-text" placeholder="%SEMT% güvenlik filesi, %ILCE% güvenlik ağı, %IL% güvenlik filesi, güvenlik filesi %SEMT%, %ILCE% file" />
+            </div>
+        </div>
+
+        <div class="vcc-field vcc-featured-image">
+            <label><?php esc_html_e('Öne çıkan görsel (varsayılan)', 'variable-content-creator'); ?></label>
+            <p class="description"><?php esc_html_e('Oluşturulan her taslağa bu görsel öne çıkan görsel olarak atanır. Boş bırakırsanız atanmaz.', 'variable-content-creator'); ?></p>
+            <input type="hidden" id="vcc_default_thumbnail_id" name="vcc_default_thumbnail_id" value="<?php echo (int) $default_thumbnail_id; ?>" />
+            <p>
+                <button type="button" id="vcc-btn-set-thumbnail" class="button"><?php esc_html_e('Görsel seç', 'variable-content-creator'); ?></button>
+                <button type="button" id="vcc-btn-remove-thumbnail" class="button" <?php echo $default_thumbnail_id ? '' : ' style="display:none;"'; ?>><?php esc_html_e('Görseli kaldır', 'variable-content-creator'); ?></button>
+            </p>
+            <div id="vcc-thumbnail-preview" class="vcc-thumbnail-preview">
+                <?php if ($default_thumbnail_id && wp_attachment_is_image($default_thumbnail_id)) : ?>
+                    <?php echo wp_get_attachment_image($default_thumbnail_id, [120, 120]); ?>
+                <?php endif; ?>
             </div>
         </div>
 

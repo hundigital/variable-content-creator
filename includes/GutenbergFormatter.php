@@ -118,7 +118,25 @@ class GutenbergFormatter {
             return self::makeHeadingBlock($innerHtml, $level);
         }
         if ($tag === 'p') {
+            $onlyImg = self::getSingleChildImg($el);
+            if ($onlyImg !== null) {
+                return self::makeImageBlockFromElement($onlyImg);
+            }
             return self::makeParagraphBlock($innerHtml);
+        }
+        if ($tag === 'figure') {
+            $img = self::getFirstImg($el);
+            if ($img !== null) {
+                return self::makeImageBlockFromElement($img, $dom->saveHTML($el));
+            }
+            $childBlocks = self::elementsToBlocks($el->childNodes, $dom);
+            if (!empty($childBlocks)) {
+                return self::makeGroupBlock($childBlocks, $el->hasAttribute('class') ? trim($el->getAttribute('class')) : '');
+            }
+            return null;
+        }
+        if ($tag === 'img') {
+            return self::makeImageBlockFromElement($el);
         }
         if ($tag === 'ul' || $tag === 'ol') {
             $full = $dom->saveHTML($el);
@@ -131,6 +149,78 @@ class GutenbergFormatter {
         }
 
         return null;
+    }
+
+    /** @param DOMElement $el @return DOMElement|null */
+    private static function getSingleChildImg($el) {
+        $img = null;
+        foreach ($el->childNodes as $node) {
+            if ($node->nodeType !== XML_ELEMENT_NODE) {
+                if ($node->nodeType === XML_TEXT_NODE && trim($node->textContent) !== '') {
+                    return null;
+                }
+                continue;
+            }
+            if (strtolower($node->nodeName) === 'img') {
+                if ($img !== null) return null;
+                $img = $node;
+            } else {
+                return null;
+            }
+        }
+        return $img;
+    }
+
+    /** @param DOMElement $el @return DOMElement|null */
+    private static function getFirstImg($el) {
+        if (strtolower($el->nodeName) === 'img') {
+            return $el;
+        }
+        foreach ($el->childNodes as $node) {
+            if ($node->nodeType === XML_ELEMENT_NODE && strtolower($node->nodeName) === 'img') {
+                return $node;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * core/image bloğu üretir.
+     * @param DOMElement $img
+     * @param string|null $figureHtml figure varsa onun HTML'i (yoksa img'den üretilir)
+     * @return array
+     */
+    private static function makeImageBlockFromElement($img, $figureHtml = null) {
+        $src = $img->hasAttribute('src') ? $img->getAttribute('src') : '';
+        $alt = $img->hasAttribute('alt') ? $img->getAttribute('alt') : '';
+        $id = 0;
+        if ($img->hasAttribute('class') && preg_match('/\bwp-image-(\d+)\b/', $img->getAttribute('class'), $m)) {
+            $id = (int) $m[1];
+        }
+        $attrs = [
+            'url' => $src,
+            'alt' => $alt,
+        ];
+        if ($id > 0) {
+            $attrs['id'] = $id;
+        }
+        if ($figureHtml !== null) {
+            $html = $figureHtml;
+        } else {
+            $cls = 'wp-block-image';
+            if ($id > 0) {
+                $html = '<figure class="' . $cls . '"><img src="' . esc_attr($src) . '" alt="' . esc_attr($alt) . '" class="wp-image-' . $id . '"/></figure>';
+            } else {
+                $html = '<figure class="' . $cls . '"><img src="' . esc_attr($src) . '" alt="' . esc_attr($alt) . '"/></figure>';
+            }
+        }
+        return [
+            'blockName'    => 'core/image',
+            'attrs'       => $attrs,
+            'innerBlocks'  => [],
+            'innerHTML'    => $html,
+            'innerContent' => [ $html ],
+        ];
     }
 
     private static function getInnerHtml($el, $dom) {

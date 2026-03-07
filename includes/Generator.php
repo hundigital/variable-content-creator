@@ -45,6 +45,7 @@ class VCC_Generator {
         $seo_title_tpl = get_option('vcc_seo_title_tpl', '');
         $seo_desc_tpl = get_option('vcc_seo_desc_tpl', '');
         $focus_keyword_tpl = get_option('vcc_focus_keyword_tpl', '');
+        $default_thumbnail_id = (int) get_option('vcc_default_thumbnail_id', 0);
         $template_version = md5($content_template);
 
         foreach ($batch as $target) {
@@ -54,7 +55,8 @@ class VCC_Generator {
                 $seo_title_tpl,
                 $seo_desc_tpl,
                 $focus_keyword_tpl,
-                $template_version
+                $template_version,
+                $default_thumbnail_id
             );
             if (is_wp_error($post_id)) {
                 $errors[] = $target['il'] . ' / ' . $target['ilce'] . ' / ' . $target['semt'] . ': ' . $post_id->get_error_message();
@@ -88,9 +90,10 @@ class VCC_Generator {
      * @param string $seo_desc_tpl
      * @param string $focus_keyword_tpl
      * @param string $template_version
+     * @param int    $thumbnail_attachment_id Öne çıkan görsel attachment ID (0 = atanmaz)
      * @return int|WP_Error Post ID, 0 = atlandı (duplicate), WP_Error = hata
      */
-    public static function createPost($target, $content_template, $seo_title_tpl, $seo_desc_tpl, $focus_keyword_tpl, $template_version) {
+    public static function createPost($target, $content_template, $seo_title_tpl, $seo_desc_tpl, $focus_keyword_tpl, $template_version, $thumbnail_attachment_id = 0) {
         $il = $target['il'];
         $ilce = $target['ilce'];
         $semt = isset($target['semt']) ? $target['semt'] : '';
@@ -113,6 +116,13 @@ class VCC_Generator {
         $title = self::buildTitle($il, $ilce, $semt);
         $content = self::replacePlaceholders($content_template, $il, $ilce, $semt);
         $content = GutenbergFormatter::wrap($content);
+        // Gutenberg ile tam uyum için parse + serialize ile normalizasyon (içeriği kurtar uyarısını önler)
+        if (function_exists('parse_blocks') && function_exists('serialize_blocks')) {
+            $parsed = parse_blocks($content);
+            if (!empty($parsed)) {
+                $content = serialize_blocks($parsed);
+            }
+        }
 
         $post_data = [
             'post_title'   => $title,
@@ -127,6 +137,10 @@ class VCC_Generator {
             return $post_id;
         }
         update_post_meta($post_id, self::META_LOCATION_HASH, $hash);
+
+        if ($thumbnail_attachment_id > 0 && wp_attachment_is_image($thumbnail_attachment_id)) {
+            set_post_thumbnail($post_id, $thumbnail_attachment_id);
+        }
 
         $seo_title = self::replacePlaceholders($seo_title_tpl, $il, $ilce, $semt);
         $seo_desc = self::replacePlaceholders($seo_desc_tpl, $il, $ilce, $semt);

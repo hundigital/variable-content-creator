@@ -129,6 +129,26 @@
     margin-left: 0.5em;
 }
 
+.vcc-featured-image {
+    margin-top: 1.5em;
+}
+
+.vcc-featured-image .button + .button {
+    margin-left: 0.5em;
+}
+
+.vcc-thumbnail-preview {
+    margin-top: 0.75em;
+}
+
+.vcc-thumbnail-preview img {
+    max-width: 120px;
+    height: auto;
+    display: block;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+}
+
 /* Progress */
 .vcc-progress-area {
     margin-top: 1.5em;

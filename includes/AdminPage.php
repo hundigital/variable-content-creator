@@ -20,6 +20,7 @@ class AdminPage {
         $seo_title_tpl = get_option('vcc_seo_title_tpl', '');
         $seo_desc_tpl = get_option('vcc_seo_desc_tpl', '');
         $focus_keyword_tpl = get_option('vcc_focus_keyword_tpl', '');
+        $default_thumbnail_id = (int) get_option('vcc_default_thumbnail_id', 0);
         if ($content_template === '' && is_readable(VCC_DEFAULT_TEMPLATE_FILE)) {
             $content_template = file_get_contents(VCC_DEFAULT_TEMPLATE_FILE);
         }

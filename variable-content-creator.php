@@ -33,6 +33,7 @@ function vcc_enqueue_admin_assets($hook_suffix) {
     if ($hook_suffix !== 'tools_page_' . VCC_PLUGIN_SLUG) {
         return;
     }
+    wp_enqueue_media();
     wp_enqueue_style(
         'vcc-admin',
         VCC_PLUGIN_URL . 'assets/admin.css',
@@ -42,7 +43,7 @@ function vcc_enqueue_admin_assets($hook_suffix) {
     wp_enqueue_script(
         'vcc-admin',
         VCC_PLUGIN_URL . 'assets/admin.js',
-        ['jquery'],
+        ['jquery', 'media-editor', 'media-views'],
         VCC_VERSION,
         true
     );

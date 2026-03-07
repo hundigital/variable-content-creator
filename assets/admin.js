@@ -133,6 +133,40 @@
         runBatchGeneration(il, ilce, semt);
     });
 
+    // Öne çıkan görsel seçimi (Media Manager) — wp.media yüklü olmalı (media-editor bağımlılığı)
+    var vccMediaFrame;
+    $(document).on('click', '#vcc-btn-set-thumbnail', function(e) {
+        e.preventDefault();
+        if (typeof wp === 'undefined' || !wp.media) {
+            alert('Medya kütüphanesi yüklenemedi. Sayfayı yenileyin.');
+            return;
+        }
+        if (vccMediaFrame) {
+            vccMediaFrame.open();
+            return;
+        }
+        vccMediaFrame = wp.media({
+            title: (typeof vccAdmin !== 'undefined' && vccAdmin.i18n && vccAdmin.i18n.setThumbnail) ? vccAdmin.i18n.setThumbnail : 'Görsel seç',
+            button: { text: (typeof vccAdmin !== 'undefined' && vccAdmin.i18n && vccAdmin.i18n.useImage) ? vccAdmin.i18n.useImage : 'Kullan' },
+            library: { type: 'image' },
+            multiple: false
+        });
+        vccMediaFrame.on('select', function() {
+            var attachment = vccMediaFrame.state().get('selection').first().toJSON();
+            $('#vcc_default_thumbnail_id').val(attachment.id);
+            var thumbUrl = attachment.sizes && attachment.sizes.thumbnail ? attachment.sizes.thumbnail.url : attachment.url;
+            $('#vcc-thumbnail-preview').empty().append($('<img>').attr('src', thumbUrl).attr('alt', ''));
+            $('#vcc-btn-remove-thumbnail').show();
+        });
+        vccMediaFrame.open();
+    });
+    $(document).on('click', '#vcc-btn-remove-thumbnail', function(e) {
+        e.preventDefault();
+        $('#vcc_default_thumbnail_id').val('');
+        $('#vcc-thumbnail-preview').empty();
+        $('#vcc-btn-remove-thumbnail').hide();
+    });
+
     $('#vcc-btn-load-default').on('click', function() {
         $.post(vccAdmin.ajaxUrl, {
             action: 'vcc_get_default_template',
@@ -186,7 +220,8 @@
             content_template: getEditorContent(),
             seo_title_tpl: $('#vcc_seo_title_tpl').val(),
             seo_desc_tpl: $('#vcc_seo_desc_tpl').val(),
-            focus_keyword_tpl: $('#vcc_focus_keyword_tpl').val()
+            focus_keyword_tpl: $('#vcc_focus_keyword_tpl').val(),
+            default_thumbnail_id: $('#vcc_default_thumbnail_id').val() || 0
         }).done(function(res) {
             if (res && res.success && res.total !== undefined) {
                 if (res.total === 0) {
