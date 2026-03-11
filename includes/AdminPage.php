@@ -17,6 +17,7 @@ class AdminPage {
         $provinces = JsonRepository::getProvinceNames();
         $json_error = JsonRepository::getParseError();
         $content_template = get_option('vcc_content_template', '');
+        $post_title_tpl = get_option('vcc_post_title_tpl', '');
         $seo_title_tpl = get_option('vcc_seo_title_tpl', '');
         $seo_desc_tpl = get_option('vcc_seo_desc_tpl', '');
         $focus_keyword_tpl = get_option('vcc_focus_keyword_tpl', '');

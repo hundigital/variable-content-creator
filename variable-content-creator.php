@@ -22,6 +22,28 @@ define('VCC_JSON_FILE', VCC_DATA_DIR . 'il-ilce-semtler.json');
 define('VCC_DEFAULT_TEMPLATE_FILE', VCC_DATA_DIR . 'default-post.html');
 define('VCC_BATCH_SIZE', 30);
 
+/**
+ * Debug log (WP_DEBUG_LOG veya sunucu error log'una yazar).
+ *
+ * @param string $msg
+ */
+function vcc_log($msg) {
+    if (defined('WP_DEBUG') && WP_DEBUG && function_exists('error_log')) {
+        error_log('[VCC] ' . $msg);
+    }
+}
+
+/**
+ * Şablon alanları için sanitize: HTML kaldırır, %IL% / %ILCE% / %SEMT% placeholder'larını bozmaz.
+ * sanitize_text_field() %[a-f0-9]{2} (örn. %CE%) sildiği için %ILCE% bozuluyordu.
+ *
+ * @param string $value
+ * @return string
+ */
+function vcc_sanitize_template_field($value) {
+    return trim(wp_strip_all_tags((string) $value));
+}
+
 require_once VCC_PLUGIN_DIR . 'includes/PhpLimits.php';
 require_once VCC_PLUGIN_DIR . 'includes/JsonRepository.php';
 require_once VCC_PLUGIN_DIR . 'includes/AjaxController.php';

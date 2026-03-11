@@ -218,6 +218,7 @@
             include_province_only: $('#vcc-include-province-only').is(':checked') ? 1 : 0,
             include_ilce_no_semt: $('#vcc-include-ilce-no-semt').is(':checked') ? 1 : 0,
             content_template: getEditorContent(),
+            post_title_tpl: $('#vcc_post_title_tpl').val(),
             seo_title_tpl: $('#vcc_seo_title_tpl').val(),
             seo_desc_tpl: $('#vcc_seo_desc_tpl').val(),
             focus_keyword_tpl: $('#vcc_focus_keyword_tpl').val(),

@@ -42,16 +42,22 @@ class VCC_Generator {
         $cursor = Queue::getCursor();
 
         $content_template = get_option('vcc_content_template', '');
+        $post_title_tpl = get_option('vcc_post_title_tpl', '');
         $seo_title_tpl = get_option('vcc_seo_title_tpl', '');
         $seo_desc_tpl = get_option('vcc_seo_desc_tpl', '');
         $focus_keyword_tpl = get_option('vcc_focus_keyword_tpl', '');
         $default_thumbnail_id = (int) get_option('vcc_default_thumbnail_id', 0);
         $template_version = md5($content_template);
 
+        if (function_exists('vcc_log')) {
+            vcc_log('runBatch: options read - post_title_tpl length=' . strlen($post_title_tpl) . ', seo_title_tpl length=' . strlen($seo_title_tpl) . ', seo_desc_tpl length=' . strlen($seo_desc_tpl) . ', focus_keyword_tpl length=' . strlen($focus_keyword_tpl) . ', post_title_preview=' . substr($post_title_tpl, 0, 50));
+        }
+
         foreach ($batch as $target) {
             $post_id = self::createPost(
                 $target,
                 $content_template,
+                $post_title_tpl,
                 $seo_title_tpl,
                 $seo_desc_tpl,
                 $focus_keyword_tpl,
@@ -86,6 +92,7 @@ class VCC_Generator {
      *
      * @param array{il: string, ilce: string, semt: string} $target
      * @param string $content_template
+     * @param string $post_title_tpl İçerik başlık şablonu (boşsa buildTitle kullanılır)
      * @param string $seo_title_tpl
      * @param string $seo_desc_tpl
      * @param string $focus_keyword_tpl
@@ -93,7 +100,7 @@ class VCC_Generator {
      * @param int    $thumbnail_attachment_id Öne çıkan görsel attachment ID (0 = atanmaz)
      * @return int|WP_Error Post ID, 0 = atlandı (duplicate), WP_Error = hata
      */
-    public static function createPost($target, $content_template, $seo_title_tpl, $seo_desc_tpl, $focus_keyword_tpl, $template_version, $thumbnail_attachment_id = 0) {
+    public static function createPost($target, $content_template, $post_title_tpl, $seo_title_tpl, $seo_desc_tpl, $focus_keyword_tpl, $template_version, $thumbnail_attachment_id = 0) {
         $il = $target['il'];
         $ilce = $target['ilce'];
         $semt = isset($target['semt']) ? $target['semt'] : '';
@@ -113,7 +120,7 @@ class VCC_Generator {
             return 0;
         }
 
-        $title = self::buildTitle($il, $ilce, $semt);
+        $title = ($post_title_tpl !== '') ? self::replacePlaceholders($post_title_tpl, $il, $ilce, $semt) : self::buildTitle($il, $ilce, $semt);
         $content = self::replacePlaceholders($content_template, $il, $ilce, $semt);
         $content = GutenbergFormatter::wrap($content);
         // Gutenberg ile tam uyum için parse + serialize ile normalizasyon (içeriği kurtar uyarısını önler)

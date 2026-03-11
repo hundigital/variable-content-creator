@@ -69,11 +69,45 @@ function vcc_ajax_start_queue() {
         $il = isset($_POST['il']) ? sanitize_text_field(wp_unslash($_POST['il'])) : '';
         $ilce = isset($_POST['ilce']) ? sanitize_text_field(wp_unslash($_POST['ilce'])) : 'ALL';
         $semt = isset($_POST['semt']) ? sanitize_text_field(wp_unslash($_POST['semt'])) : 'ALL';
-        $content_template = isset($_POST['content_template']) ? wp_kses_post(wp_unslash($_POST['content_template'])) : '';
-        $seo_title_tpl = isset($_POST['seo_title_tpl']) ? sanitize_text_field(wp_unslash($_POST['seo_title_tpl'])) : '';
-        $seo_desc_tpl = isset($_POST['seo_desc_tpl']) ? sanitize_textarea_field(wp_unslash($_POST['seo_desc_tpl'])) : '';
-        $focus_keyword_tpl = isset($_POST['focus_keyword_tpl']) ? sanitize_text_field(wp_unslash($_POST['focus_keyword_tpl'])) : '';
         $default_thumbnail_id = isset($_POST['default_thumbnail_id']) ? absint($_POST['default_thumbnail_id']) : 0;
+
+        // SEO ve şablon: sadece POST'ta key varsa güncelle (kesilme/eksik POST'ta mevcut option ezilmesin)
+        $content_template = get_option('vcc_content_template', '');
+        if (isset($_POST['content_template'])) {
+            $content_template = wp_kses_post(wp_unslash($_POST['content_template']));
+            vcc_log('vcc_start_queue: content_template from POST, length=' . strlen($content_template));
+        } else {
+            vcc_log('vcc_start_queue: content_template key missing in POST, keeping existing');
+        }
+        $seo_title_tpl = get_option('vcc_seo_title_tpl', '');
+        if (isset($_POST['seo_title_tpl'])) {
+            $seo_title_tpl = vcc_sanitize_template_field(wp_unslash($_POST['seo_title_tpl']));
+            vcc_log('vcc_start_queue: seo_title_tpl from POST, length=' . strlen($seo_title_tpl) . ', preview=' . substr($seo_title_tpl, 0, 60));
+        } else {
+            vcc_log('vcc_start_queue: seo_title_tpl key missing in POST, keeping existing (length=' . strlen($seo_title_tpl) . ')');
+        }
+        $seo_desc_tpl = get_option('vcc_seo_desc_tpl', '');
+        if (isset($_POST['seo_desc_tpl'])) {
+            $seo_desc_tpl = vcc_sanitize_template_field(wp_unslash($_POST['seo_desc_tpl']));
+            vcc_log('vcc_start_queue: seo_desc_tpl from POST, length=' . strlen($seo_desc_tpl));
+        } else {
+            vcc_log('vcc_start_queue: seo_desc_tpl key missing in POST, keeping existing');
+        }
+        $focus_keyword_tpl = get_option('vcc_focus_keyword_tpl', '');
+        if (isset($_POST['focus_keyword_tpl'])) {
+            $focus_keyword_tpl = vcc_sanitize_template_field(wp_unslash($_POST['focus_keyword_tpl']));
+            vcc_log('vcc_start_queue: focus_keyword_tpl from POST, length=' . strlen($focus_keyword_tpl) . ', preview=' . substr($focus_keyword_tpl, 0, 60));
+        } else {
+            vcc_log('vcc_start_queue: focus_keyword_tpl key missing in POST, keeping existing (length=' . strlen($focus_keyword_tpl) . ')');
+        }
+        $post_title_tpl = get_option('vcc_post_title_tpl', '');
+        if (isset($_POST['post_title_tpl'])) {
+            $post_title_tpl = vcc_sanitize_template_field(wp_unslash($_POST['post_title_tpl']));
+            vcc_log('vcc_start_queue: post_title_tpl from POST, length=' . strlen($post_title_tpl) . ', preview=' . substr($post_title_tpl, 0, 60));
+        } else {
+            vcc_log('vcc_start_queue: post_title_tpl key missing in POST, keeping existing (length=' . strlen($post_title_tpl) . ')');
+        }
+
         if ($il === '') {
             wp_send_json(['success' => false, 'message' => __('İl seçin.', 'variable-content-creator')]);
         }
@@ -84,6 +118,7 @@ function vcc_ajax_start_queue() {
             wp_send_json(['success' => true, 'total' => 0]);
         }
         update_option('vcc_content_template', $content_template, false);
+        update_option('vcc_post_title_tpl', $post_title_tpl, false);
         update_option('vcc_seo_title_tpl', $seo_title_tpl, false);
         update_option('vcc_seo_desc_tpl', $seo_desc_tpl, false);
         update_option('vcc_focus_keyword_tpl', $focus_keyword_tpl, false);

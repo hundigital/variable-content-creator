@@ -6,6 +6,7 @@
  * @var array  $provinces
  * @var string|null $json_error
  * @var string $content_template
+ * @var string $post_title_tpl
  * @var string $seo_title_tpl
  * @var string $seo_desc_tpl
  * @var string $focus_keyword_tpl
@@ -99,6 +100,12 @@ if (!defined('ABSPATH')) {
                 'editor_class'  => 'vcc-editor',
             ]);
             ?>
+        </div>
+
+        <div class="vcc-field">
+            <label for="vcc_post_title_tpl"><?php esc_html_e('İçerik başlık şablonu', 'variable-content-creator'); ?></label>
+            <p class="description"><?php esc_html_e('Oluşturulan her yazının başlığı bu şablondan üretilir. Placeholder\'lar: %IL%, %ILCE%, %SEMT%. Boş bırakırsanız varsayılan format kullanılır (Semt İlçe İl Güvenlik Filesi / İlçe İl Güvenlik Filesi / İl Güvenlik Filesi).', 'variable-content-creator'); ?></p>
+            <input type="text" id="vcc_post_title_tpl" name="vcc_post_title_tpl" value="<?php echo esc_attr($post_title_tpl); ?>" class="large-text" placeholder="%SEMT% %ILCE% %IL% Güvenlik Filesi" />
         </div>
 
         <div class="vcc-seo-templates">
